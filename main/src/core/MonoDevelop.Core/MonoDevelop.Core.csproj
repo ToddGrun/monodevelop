@@ -149,6 +149,9 @@
       <HintPath>$(MSBuild_OSS_BinDir)Microsoft.Build.Utilities.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Build.Tasks.Core">
+      <HintPath>$(MSBuild_OSS_BinDir)Microsoft.Build.Tasks.Core.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
