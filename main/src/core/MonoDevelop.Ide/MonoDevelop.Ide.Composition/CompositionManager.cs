@@ -1,4 +1,4 @@
-﻿// CompositionManager.cs
+// CompositionManager.cs
 //
 // Author:
 //   Kirill Osenkov <https://github.com/KirillOsenkov>
@@ -122,22 +122,51 @@ namespace MonoDevelop.Ide.Composition
 				tasks.Add (task);
 			}
 
-			foreach (var task in tasks) {
-				catalog = catalog.AddParts (await task);
+			foreach (var task in tasks)
+			{
+				var discoveredParts = await task;
+				discoveredParts = new DiscoveredParts(discoveredParts.Parts.Where(p => ShouldInclude(p)), discoveredParts.DiscoveryErrors);
+				catalog = catalog.AddParts(discoveredParts);
 			}
 
 			var discoveryErrors = catalog.DiscoveredParts.DiscoveryErrors;
 			if (!discoveryErrors.IsEmpty) {
-				throw new ApplicationException ($"MEF catalog scanning errors encountered.\n{string.Join ("\n", discoveryErrors)}");
+				var errorMessages = discoveryErrors.Select (x => x.Message).OrderBy (x => x);
+				System.IO.File.WriteAllText (@"c:\composition_discovery_errors.txt", String.Join (Environment.NewLine, errorMessages));
+
+				//throw new ApplicationException ($"MEF catalog scanning errors encountered.\n{string.Join ("\n", discoveryErrors)}");
 			}
 
 			CompositionConfiguration configuration = CompositionConfiguration.Create (catalog);
 
-			if (!configuration.CompositionErrors.IsEmpty) {
+			if (!configuration.CompositionErrors.IsEmpty)
+			{
 				// capture the errors in an array for easier debugging
-				var errors = configuration.CompositionErrors.ToArray ();
-				configuration.ThrowOnErrors ();
+				var errorMessages = configuration.CompositionErrors.SelectMany(x => x).Select(x => x.Message).OrderBy(x => x);
+				System.IO.File.WriteAllText (@"c:\composition_errors.txt", String.Join (Environment.NewLine, errorMessages));
+				//configuration.ThrowOnErrors ();
 			}
+
+			//if (_partsExcludedFromInterfaceAssemblies.Count > 0)
+			//{
+			//	var excludedParts = _partsExcludedFromInterfaceAssemblies.Select (x => x.Id).OrderBy (x => x);
+			//	System.IO.File.WriteAllText (@"c:\composition_partsExcludedFromInterfaceAssemblies.txt", String.Join (Environment.NewLine, excludedParts));
+			//}
+
+			//if (_partsExcludedFromImportAssemblies.Count > 0)
+			//{
+			//	var excludedParts = _partsExcludedFromImportAssemblies.Select (x => x.Id).OrderBy (x => x);
+			//	System.IO.File.WriteAllText (@"c:\composition_partsExcludedFromImportAssemblies.txt", String.Join (Environment.NewLine, excludedParts));
+			//}
+
+			if (_partsExcludedFromImportTypes.Count > 0)
+			{
+				var excludedParts = _partsExcludedFromImportTypes.Select (x => x.Id).OrderBy (x => x);
+				System.IO.File.WriteAllText (@"c:\composition_partsExcludedFromImportTypes.txt", String.Join (Environment.NewLine, excludedParts));
+			}
+
+			var typeRefs = configuration.Catalog.Parts.Select (x => x.Id).OrderBy(x => x);
+			System.IO.File.WriteAllText (@"c:\composition_success.txt", String.Join (Environment.NewLine, typeRefs));
 
 			RuntimeComposition = RuntimeComposition.CreateRuntimeComposition (configuration);
 			ExportProviderFactory = RuntimeComposition.CreateExportProviderFactory ();
@@ -145,6 +174,51 @@ namespace MonoDevelop.Ide.Composition
 			HostServices = MefV1HostServices.Create (ExportProvider.AsExportProvider ());
 			ExportProviderV1 = NetFxAdapters.AsExportProvider (ExportProvider);
 		}
+
+		bool _includeCheck = true;
+//		static List<ComposablePartDefinition> _partsExcludedFromInterfaceAssemblies = new List<ComposablePartDefinition> ();
+//		static List<ComposablePartDefinition> _partsExcludedFromImportAssemblies = new List<ComposablePartDefinition> ();
+		static List<ComposablePartDefinition> _partsExcludedFromImportTypes = new List<ComposablePartDefinition> ();
+
+		bool ShouldInclude (ComposablePartDefinition part)
+		{
+			if (_includeCheck)
+			{
+				if (part.Id.Contains("ClassificationTypeMap"))
+				{
+					_includeCheck = true;
+				}
+
+				//if (part.Imports.Any (x => _excludedAssemblies.Contains (x.ImportingSiteType.Assembly.GetName ().Name))) {
+				//	_partsExcludedFromImportAssemblies.Add (part);
+				//	return false;
+				//}
+				//else if (part.Type.GetInterfaces ().Any (x => _excludedAssemblies.Contains (x.Assembly.GetName ().Name)))
+				//{
+				//	_partsExcludedFromInterfaceAssemblies.Add (part);
+				//	return false;
+				//}
+				if (part.Imports.Any(x => _excludedTypes.Contains(x.ImportingSiteType.FullName)))
+				{
+					_partsExcludedFromImportTypes.Add (part);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		static HashSet<string> _excludedAssemblies = new HashSet<string> (StringComparer.Ordinal) {
+			//"Microsoft.VisualStudio.Text.UI.Wpf"
+		};
+
+		static HashSet<string> _excludedTypes = new HashSet<string> (StringComparer.Ordinal) {
+			"Microsoft.VisualStudio.Language.Intellisense.ICompletionBroker",
+			"Microsoft.VisualStudio.Language.Intellisense.IGlyphService",
+			"Microsoft.VisualStudio.Language.Intellisense.IPeekResultFactory",
+			"Microsoft.VisualStudio.Language.Intellisense.IQuickInfoBroker",
+			"Microsoft.VisualStudio.Language.Intellisense.ISignatureHelpBroker",
+		};
 
 		void ReadAssembliesFromAddins (HashSet<Assembly> assemblies, string extensionPath)
 		{

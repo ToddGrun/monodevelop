@@ -165,6 +165,11 @@
       <HintPath>..\..\..\packages\Microsoft.VisualStudio.Validation.15.3.15\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+
+    <Reference Include="Microsoft.VisualStudio.Language.Intellisense">
+      <HintPath>..\..\..\build\bin\Microsoft.VisualStudio.Language.Intellisense.dll</HintPath>
+    </Reference>
+
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -187,6 +192,9 @@
     <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop">
       <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.2.3.0-beta1\lib\net46\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.EditorFeatures">
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.EditorFeatures.2.3.0.WithIVTMonoDevelop.IDE\lib\net46\Microsoft.CodeAnalysis.EditorFeatures.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.EditorFeatures.Text">
       <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.EditorFeatures.Text.2.3.0-beta1\lib\net46\Microsoft.CodeAnalysis.EditorFeatures.Text.dll</HintPath>
@@ -230,6 +238,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf">
+      <HintPath>..\..\..\packages\TextUIWpfStub.15.0.0\lib\net45\Microsoft.VisualStudio.Text.UI.Wpf.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

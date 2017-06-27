@@ -256,10 +256,13 @@
       <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Features.2.3.0-beta1\lib\netstandard1.3\Microsoft.CodeAnalysis.VisualBasic.Features.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.EditorFeatures">
-      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.EditorFeatures.2.3.0-beta1\lib\net46\Microsoft.CodeAnalysis.EditorFeatures.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.EditorFeatures.2.3.0.WithIVTMonoDevelop.IDE\lib\net46\Microsoft.CodeAnalysis.EditorFeatures.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.EditorFeatures.Text">
       <HintPath>..\..\..\packages\Microsoft.CodeAnalysis.EditorFeatures.Text.2.3.0-beta1\lib\net46\Microsoft.CodeAnalysis.EditorFeatures.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf"> 
+      <HintPath>..\..\..\packages\TextUIWpfStub.15.0.0\lib\net45\Microsoft.VisualStudio.Text.UI.Wpf.dll</HintPath> 
     </Reference>
   </ItemGroup>
   <ItemGroup>
